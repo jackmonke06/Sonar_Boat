@@ -1,0 +1,41 @@
+unsigned long previousLogTime = 0;
+const unsigned long logInterval = 1000; // 1 second
+
+//Simulate depth with wall reading from sensor
+
+//latitude and longitude will be from gps
+
+// 1 second delay? 
+
+void loop() {
+
+  // Get GPS readings
+  latitude = gps.location.lat();
+  longitude = gps.location.lng();
+
+  // Get sonar reading
+  depth = sonarDepth;
+
+  // Only save if GPS has a valid fix
+  if (gps.location.isValid() &&
+      millis() - previousLogTime >= logInterval) {
+
+    previousLogTime = millis();
+
+    File file = SD.open("/sonar_data.csv", FILE_APPEND);
+
+    if (file) {
+
+      file.print(longitude, 6);
+      file.print(",");
+      file.print(latitude, 6);
+      file.print(",");
+      file.println(depth, 2);
+
+      file.close();
+
+    } else {
+      Serial.println("Error opening file");
+    }
+  }
+}
